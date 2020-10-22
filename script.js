@@ -1,11 +1,11 @@
-// Generate recently searched cities on page load
+// Recent City
 populateList();
-// Run most recently searched city (that was added to local storage)
+// run last city searched
 if (localStorage.getItem("cities") !== null) {
     lastCityStored();
     citySearch();
 };
-// Set dates throughout the page
+// Set date
 $(document).ready(function() {
     $("#currentDate").text(`(${moment().format("l")})`);
     for (i = 1; i < 6; i++) {
@@ -13,13 +13,12 @@ $(document).ready(function() {
         forecastDate.text(moment().add(`${i}`, "d").format("l"));
     };
 });
-// Collect city input and call API
 function citySearch() {
     citySearchInput = $("#citySearchInput").val().trim();
     citySearchInput = citySearchInput.split(" ").join("+");
     displayWeather();
 };
-$("#citySearchBtn").click(function() {              // Search when clicking submit button
+$("#citySearchBtn").click(function() {            
     event.preventDefault();
     citySearchInput = $("#citySearchInput").val()
     if (citySearchInput == "") {
@@ -27,28 +26,24 @@ $("#citySearchBtn").click(function() {              // Search when clicking subm
     }
     citySearch();
 });
-$('#citySearchInput').keypress(function (event) {           // Search on pressing 'enter'
+$('#citySearchInput').keypress(function (event) {           
     if (event.which == 13) {
         event.preventDefault();
         $(this).blur();
         citySearch();
     };
 });
-$("body").delegate(".searchHistoryBtn", "click", function() {              // Search when selecting a city from the recently-searched list
+$("body").delegate(".searchHistoryBtn", "click", function() {            
     event.preventDefault();
     $("#citySearchInput").val($(this).text());
     citySearch();
 });
-// $("#clearSearchBtn").click(function() {                 // Clear recently searched cities (not currently in use)
-//     localStorage.clear();
-//     window.location.assign("./index.html");
-// });
-// OpenWeatherMap API function to display current conditions
+
 function displayWeather() {
     var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + citySearchInput + "&appid=4679460f119c185a5abb3222455a221f&units=imperial";
-    $.ajax ({               // Get weather for current day
+    $.ajax ({              
         url: queryURL,
-        method: "GET"
+        method: "GET" //GET Forecast
         }).then(function(response) {
             var weatherIcon = response.weather[0].icon;
             var weatherURL = "https://openweathermap.org/img/wn/" + weatherIcon + "@2x.png";
@@ -57,11 +52,11 @@ function displayWeather() {
             $("#currentTemp").text(Math.round(response.main.temp) + " °F");
             $("#currentHumidity").text(response.main.humidity + "%");
             $("#currentWindSpeed").text(response.wind.speed + " MPH");
-            
+            // GET UV data
             var lat = response.coord.lat;
             var lon = response.coord.lon;
             var uvURL = "https://api.openweathermap.org/data/2.5/uvi?appid=4679460f119c185a5abb3222455a221f&lat=" + lat + "&lon=" + lon;
-            $.ajax ({               // Get UV index for current day
+            $.ajax ({              
                 url: uvURL,
                 method: "GET"
             })
@@ -82,24 +77,16 @@ function displayWeather() {
                     $("#currentUV").removeClass().addClass("badge badge-success");
                 };
             })
-            .catch(function(error) {
-                // console.log(error);
-            });
-        
-        addCitySearched();          // Add successful search input to local storage
-        populateList();             // Add successful search input as clickable list item
+        //Add search input into local storage and populate           
+        addCitySearched();         
+        populateList();             
         })
-        .catch(function(error) {
-            if (error.status === 404) {
-                $("#cityErrorModal").modal();
-                $("#citySearchInput").val("");
-            };
-        });
+        
     fiveDayForecast();
 }; 
 // OpenWeatherMap API function to display 5-day forecast
 function fiveDayForecast() {
-    var forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + citySearchInput + "&cnt=6&units=imperial&appid=166a433c57516f51dfab1f7edaed8413";
+    var forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + citySearchInput + "&cnt==6&units=imperial&appid=4679460f119c185a5abb3222455a221f"                         
     $.ajax({
         url: forecastURL,
         method: "GET"
@@ -134,7 +121,7 @@ function addCitySearched() {
     localStorage.setItem("cities", JSON.stringify(cities));
     
 };
-// Generate list of recently searched cities
+// Searched cities list
 function populateList() {
     var cities = JSON.parse(localStorage.getItem("cities")) || [];
     var cities = cities.reverse();
@@ -143,7 +130,7 @@ function populateList() {
         $("#citySearchHistory").append(`<button type="button" class="btn btn-outline-secondary searchHistoryBtn">${city}</button>`)
     })
 };
-// Grab most recently searched city
+// Last City
 function lastCityStored(city) {
     var cities = JSON.parse(localStorage.getItem('cities'));
     var city = cities.slice(-1).pop();
