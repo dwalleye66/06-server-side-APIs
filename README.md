@@ -28,7 +28,7 @@ THEN I am presented with the last searched city forecast
 
 The following image demonstrates the application functionality:
 
-
+<img src="Assets\Screenshot 2020-10-22 170117.png">
 
 ## Review
 
