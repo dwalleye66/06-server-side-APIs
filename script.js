@@ -77,7 +77,7 @@ function displayWeather() {
                     $("#currentUV").removeClass().addClass("badge badge-success");
                 };
             })
-        //Add search input into local storage and populate           
+                 
         addCitySearched();         
         populateList();             
         })
